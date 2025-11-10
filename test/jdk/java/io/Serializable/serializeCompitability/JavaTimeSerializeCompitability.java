@@ -23,7 +23,7 @@ public class JavaTimeSerializeCompitability {
     private void deserializeJDK17Time(){
         try(InputStream in = this.getClass().getResourceAsStream("javaTimeSerializer_17.ser");
         //FileInputStream fis = new FileInputStream("javaTimeSerializer_17.ser");
-        ObjectInputStream ois = new ObjectInputStream(in);) {
+        ObjectInputStream ois = new ObjectInputStream(in)) {
             JavaTimeSerializer javaTimeSerializer = (JavaTimeSerializer)ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -31,9 +31,9 @@ public class JavaTimeSerializeCompitability {
     }
 
     private void deserializeJDK21Time(){
-        try(InputStream in = this.getClass().getResourceAsStream("javaTimeSerializer_21.ser");
+        try(InputStream in = this.getClass().getResourceAsStream("javaTimeSerializer-21.0.9-ea+1-LTS-100.ser");
             //FileInputStream fis = new FileInputStream("javaTimeSerializer_17.ser");
-            ObjectInputStream ois = new ObjectInputStream(in);) {
+            ObjectInputStream ois = new ObjectInputStream(in)) {
             JavaTimeSerializer javaTimeSerializer = (JavaTimeSerializer)ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
