@@ -50,14 +50,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import org.testng.SkipException;
-import org.testng.annotations.Test;
-
 import static jdk.test.lib.net.IPSupport.diagnoseConfigurationIssue;
-import static org.testng.Assert.*;
 
 import jdk.test.lib.net.IPSupport;
 
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -100,9 +97,8 @@ public class AfterDisconnect {
     @Test
     public void execute() throws IOException {
         Optional<String> configurationIssue = diagnoseConfigurationIssue();
-        configurationIssue.map(SkipException::new).ifPresent(x -> {
-            throw x;
-        });
+        Assumptions.assumeTrue(configurationIssue.isEmpty(), configurationIssue.orElse(""));
+
         boolean preferIPv6 = Boolean.getBoolean("java.net.preferIPv6Addresses");
         InetAddress lb = InetAddress.getLoopbackAddress();
 
