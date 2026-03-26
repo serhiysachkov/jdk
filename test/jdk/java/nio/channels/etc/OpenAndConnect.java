@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2020, 2026, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -23,6 +23,7 @@
 
 import jdk.test.lib.NetworkConfiguration;
 import jdk.test.lib.net.IPSupport;
+import org.testng.SkipException;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -33,8 +34,8 @@ import java.nio.channels.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.LinkedList;
+import java.util.Optional;
 
-import static java.lang.System.getProperty;
 import static java.lang.System.out;
 import static java.net.StandardProtocolFamily.INET;
 import static java.net.StandardProtocolFamily.INET6;
@@ -81,7 +82,10 @@ public class OpenAndConnect {
     public void setup() {
         NetworkConfiguration.printSystemConfiguration(out);
         IPSupport.printPlatformSupport(out);
-        throwSkippedExceptionIfNonOperational();
+        Optional<String> configurationIssue = diagnoseConfigurationIssue();
+        configurationIssue.map(SkipException::new).ifPresent(x -> {
+            throw x;
+        });
 
         out.println("IA4LOCAL:    " + IA4LOCAL);
         out.println("IA6LOCAL:    " + IA6LOCAL);

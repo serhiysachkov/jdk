@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019, 2024, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2019, 2026, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -47,9 +47,13 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
 
+import org.testng.SkipException;
 import org.testng.annotations.Test;
+
+import static jdk.test.lib.net.IPSupport.diagnoseConfigurationIssue;
 import static org.testng.Assert.*;
 
 import jdk.test.lib.net.IPSupport;
@@ -90,7 +94,10 @@ public class AfterDisconnect {
 
     @Test
     public void execute() throws IOException {
-        IPSupport.throwSkippedExceptionIfNonOperational();
+        Optional<String> configurationIssue = diagnoseConfigurationIssue();
+        configurationIssue.map(SkipException::new).ifPresent(x -> {
+            throw x;
+        });
         boolean preferIPv6 = Boolean.getBoolean("java.net.preferIPv6Addresses");
         InetAddress lb = InetAddress.getLoopbackAddress();
 

@@ -65,6 +65,7 @@ import jdk.test.lib.RandomFactory;
 import jdk.test.lib.NetworkConfiguration;
 import jdk.test.lib.Platform;
 import jdk.test.lib.net.IPSupport;
+import org.testng.SkipException;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -78,6 +79,7 @@ import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.Random;
 import java.util.function.Predicate;
 
@@ -85,9 +87,7 @@ import static java.net.StandardProtocolFamily.INET;
 import static java.net.StandardProtocolFamily.INET6;
 import static java.net.StandardSocketOptions.SO_SNDBUF;
 import static java.net.StandardSocketOptions.SO_RCVBUF;
-import static jdk.test.lib.net.IPSupport.hasIPv4;
-import static jdk.test.lib.net.IPSupport.hasIPv6;
-import static jdk.test.lib.net.IPSupport.preferIPv4Stack;
+import static jdk.test.lib.net.IPSupport.*;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertThrows;
 import static org.testng.Assert.assertTrue;
@@ -104,7 +104,10 @@ public class SendReceiveMaxSize {
 
     @BeforeTest
     public void setUp() {
-        IPSupport.throwSkippedExceptionIfNonOperational();
+        Optional<String> configurationIssue = diagnoseConfigurationIssue();
+        configurationIssue.map(SkipException::new).ifPresent(x -> {
+            throw x;
+        });
     }
 
     @DataProvider

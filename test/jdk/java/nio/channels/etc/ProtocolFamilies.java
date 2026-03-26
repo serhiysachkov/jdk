@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2020, 2026 Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -23,6 +23,7 @@
 
 import jdk.test.lib.NetworkConfiguration;
 import jdk.test.lib.net.IPSupport;
+import org.testng.SkipException;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -31,11 +32,12 @@ import java.io.IOException;
 import java.net.*;
 import java.nio.channels.*;
 import java.nio.channels.spi.SelectorProvider;
+import java.util.Optional;
+
 import static java.lang.System.out;
 import static java.net.StandardProtocolFamily.INET;
 import static java.net.StandardProtocolFamily.INET6;
 import static jdk.test.lib.net.IPSupport.*;
-import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertThrows;
 
 /*
@@ -59,7 +61,10 @@ public class ProtocolFamilies {
     public void setup() throws Exception {
         NetworkConfiguration.printSystemConfiguration(out);
         IPSupport.printPlatformSupport(out);
-        throwSkippedExceptionIfNonOperational();
+        Optional<String> configurationIssue = diagnoseConfigurationIssue();
+        configurationIssue.map(SkipException::new).ifPresent(x -> {
+            throw x;
+        });
 
         ia4 = getLocalIPv4Address();
         ia6 = getLocalIPv6Address();

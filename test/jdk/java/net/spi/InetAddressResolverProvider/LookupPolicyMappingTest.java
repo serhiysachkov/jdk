@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2021, 2026, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -25,12 +25,14 @@ import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.net.spi.InetAddressResolver.LookupPolicy.IPV4;
 import static java.net.spi.InetAddressResolver.LookupPolicy.IPV4_FIRST;
 import static java.net.spi.InetAddressResolver.LookupPolicy.IPV6;
 import static java.net.spi.InetAddressResolver.LookupPolicy.IPV6_FIRST;
+import static jdk.test.lib.net.IPSupport.diagnoseConfigurationIssue;
 
 import jdk.test.lib.net.IPSupport;
 import jdk.test.lib.NetworkConfiguration;
@@ -94,7 +96,10 @@ public class LookupPolicyMappingTest {
 
     // Throws SkipException if platform doesn't support required IP address types
     static void checkPlatformNetworkConfiguration() {
-        IPSupport.throwSkippedExceptionIfNonOperational();
+        Optional<String> configurationIssue = diagnoseConfigurationIssue();
+        configurationIssue.map(SkipException::new).ifPresent(x -> {
+            throw x;
+        });
         IPSupport.printPlatformSupport(System.err);
         NetworkConfiguration.printSystemConfiguration(System.err);
         // If preferIPv4=true and no IPv4 - skip

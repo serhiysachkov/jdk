@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2020, 2026 Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -32,6 +32,7 @@
 
 import jdk.test.lib.NetworkConfiguration;
 import jdk.test.lib.net.IPSupport;
+import org.testng.SkipException;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -41,14 +42,11 @@ import java.nio.channels.DatagramChannel;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
-import java.util.stream.Collectors;
+import java.util.Optional;
 import java.util.stream.Stream;
 
-import static java.lang.Boolean.parseBoolean;
-import static java.lang.System.getProperty;
 import static java.lang.System.out;
 import static jdk.test.lib.Asserts.assertEquals;
-import static jdk.test.lib.Asserts.assertTrue;
 import static jdk.test.lib.net.IPSupport.*;
 
 public class LocalSocketAddressType {
@@ -56,7 +54,10 @@ public class LocalSocketAddressType {
     @BeforeTest()
     public void setup() {
         IPSupport.printPlatformSupport(out);
-        throwSkippedExceptionIfNonOperational();
+        Optional<String> configurationIssue = diagnoseConfigurationIssue();
+        configurationIssue.map(SkipException::new).ifPresent(x -> {
+            throw x;
+        });
     }
 
     @DataProvider(name = "addresses")
