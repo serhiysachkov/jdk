@@ -26,18 +26,15 @@
  * @summary Test local address type
  * @library /test/lib
  * @build jdk.test.lib.NetworkConfiguration
- * @run testng/othervm LocalSocketAddressType
- * @run testng/othervm -Djava.net.preferIPv4Stack=true LocalSocketAddressType
+ * @run junit/othervm LocalSocketAddressType
+ * @run junit/othervm -Djava.net.preferIPv4Stack=true LocalSocketAddressType
  */
 
 import jdk.test.lib.NetworkConfiguration;
 import jdk.test.lib.net.IPSupport;
-import org.testng.SkipException;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
 
-import java.net.*;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
@@ -46,21 +43,26 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static java.lang.System.out;
-import static jdk.test.lib.Asserts.assertEquals;
+import java.util.stream.Stream;
+
+import static java.lang.System.out;
 import static jdk.test.lib.net.IPSupport.*;
+
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LocalSocketAddressType {
 
-    @BeforeTest()
-    public void setup() {
+    @BeforeAll()
+    public static void setup() {
         IPSupport.printPlatformSupport(out);
         Optional<String> configurationIssue = diagnoseConfigurationIssue();
-        configurationIssue.map(SkipException::new).ifPresent(x -> {
-            throw x;
-        });
+        Assumptions.assumeTrue(configurationIssue.isEmpty(), configurationIssue.orElse(""));
     }
 
-    @DataProvider(name = "addresses")
     public static Iterator<Object[]> addresses() throws Exception {
         NetworkConfiguration nc = NetworkConfiguration.probe();
         return Stream.concat(nc.ip4Addresses(), nc.ip6Addresses())
@@ -68,36 +70,39 @@ public class LocalSocketAddressType {
                 .iterator();
     }
 
-    @Test(dataProvider = "addresses")
-    public static void testSocketChannel(InetSocketAddress addr) throws Exception {
+    @ParameterizedTest
+    @MethodSource("addresses")
+    public void testSocketChannel(InetSocketAddress addr) throws Exception {
         try (var c = SocketChannel.open()) {
             Class<? extends InetAddress> cls = addr.getAddress().getClass();
             InetAddress ia = ((InetSocketAddress)c.bind(addr).getLocalAddress()).getAddress();
-            assertEquals(ia.getClass(), cls);
+            assertEquals(cls, ia.getClass());
             ia = c.socket().getLocalAddress();
-            assertEquals(ia.getClass(), cls);
+            assertEquals(cls, ia.getClass());
         }
     }
 
-    @Test(dataProvider = "addresses")
-    public static void testServerSocketChannel(InetSocketAddress addr) throws Exception {
+    @ParameterizedTest
+    @MethodSource("addresses")
+    public void testServerSocketChannel(InetSocketAddress addr) throws Exception {
         try (var c = ServerSocketChannel.open()) {
             Class<? extends InetAddress> cls = addr.getAddress().getClass();
             InetAddress ia = ((InetSocketAddress)c.bind(addr).getLocalAddress()).getAddress();
-            assertEquals(ia.getClass(), cls);
+            assertEquals(cls, ia.getClass());
             ia = c.socket().getInetAddress();
-            assertEquals(ia.getClass(), cls);
+            assertEquals(cls, ia.getClass());
         }
     }
 
-    @Test(dataProvider = "addresses")
-    public static void testDatagramChannel(InetSocketAddress addr) throws Exception {
+    @ParameterizedTest
+    @MethodSource("addresses")
+    public void testDatagramChannel(InetSocketAddress addr) throws Exception {
         try (var c = DatagramChannel.open()) {
             Class<? extends InetAddress> cls = addr.getAddress().getClass();
             InetAddress ia = ((InetSocketAddress)c.bind(addr).getLocalAddress()).getAddress();
-            assertEquals(ia.getClass(), cls);
+            assertEquals(cls, ia.getClass());
             ia = c.socket().getLocalAddress();
-            assertEquals(ia.getClass(), cls);
+            assertEquals(cls, ia.getClass());
         }
     }
 }
