@@ -37,6 +37,7 @@ import static jdk.test.lib.net.IPSupport.diagnoseConfigurationIssue;
 import jdk.test.lib.net.IPSupport;
 import jdk.test.lib.NetworkConfiguration;
 import org.junit.jupiter.api.Test;
+import org.testng.SkipException;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.abort;
