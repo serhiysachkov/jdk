@@ -36,8 +36,8 @@ import static jdk.test.lib.net.IPSupport.diagnoseConfigurationIssue;
 
 import jdk.test.lib.net.IPSupport;
 import jdk.test.lib.NetworkConfiguration;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
-import org.testng.SkipException;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assumptions.abort;
@@ -98,10 +98,7 @@ public class LookupPolicyMappingTest {
 
     // Throws SkipException if platform doesn't support required IP address types
     static void checkPlatformNetworkConfiguration() {
-        Optional<String> configurationIssue = diagnoseConfigurationIssue();
-        configurationIssue.map(SkipException::new).ifPresent(x -> {
-            throw x;
-        });
+        diagnoseConfigurationIssue().ifPresent(Assumptions::abort);
         IPSupport.printPlatformSupport(System.err);
         NetworkConfiguration.printSystemConfiguration(System.err);
         // If preferIPv4=true and no IPv4 - skip
