@@ -59,8 +59,7 @@ public class LocalSocketAddressType {
     @BeforeAll()
     public static void setup() {
         IPSupport.printPlatformSupport(out);
-        Optional<String> configurationIssue = diagnoseConfigurationIssue();
-        Assumptions.assumeTrue(configurationIssue.isEmpty(), configurationIssue.orElse(""));
+        diagnoseConfigurationIssue().ifPresent(Assumptions::abort);
     }
 
     public static Iterator<Object[]> addresses() throws Exception {

@@ -90,8 +90,7 @@ public class OpenAndConnect {
     public static void setup() {
         NetworkConfiguration.printSystemConfiguration(out);
         IPSupport.printPlatformSupport(out);
-        Optional<String> configurationIssue = diagnoseConfigurationIssue();
-        Assumptions.assumeTrue(configurationIssue.isEmpty(), configurationIssue.orElse(""));
+        diagnoseConfigurationIssue().ifPresent(Assumptions::abort);
 
         out.println("IA4LOCAL:    " + IA4LOCAL);
         out.println("IA6LOCAL:    " + IA6LOCAL);

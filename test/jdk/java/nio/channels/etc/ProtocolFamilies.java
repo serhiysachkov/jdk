@@ -78,8 +78,7 @@ public class ProtocolFamilies {
     public static void setup() throws Exception {
         NetworkConfiguration.printSystemConfiguration(out);
         IPSupport.printPlatformSupport(out);
-        Optional<String> configurationIssue = diagnoseConfigurationIssue();
-        Assumptions.assumeTrue(configurationIssue.isEmpty(), configurationIssue.orElse(""));
+        diagnoseConfigurationIssue().ifPresent(Assumptions::abort);
 
         ia4 = getLocalIPv4Address();
         ia6 = getLocalIPv6Address();

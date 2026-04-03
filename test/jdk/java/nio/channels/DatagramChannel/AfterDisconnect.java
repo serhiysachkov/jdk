@@ -96,8 +96,7 @@ public class AfterDisconnect {
 
     @Test
     public void execute() throws IOException {
-        Optional<String> configurationIssue = diagnoseConfigurationIssue();
-        Assumptions.assumeTrue(configurationIssue.isEmpty(), configurationIssue.orElse(""));
+        diagnoseConfigurationIssue().ifPresent(Assumptions::abort);
 
         boolean preferIPv6 = Boolean.getBoolean("java.net.preferIPv6Addresses");
         InetAddress lb = InetAddress.getLoopbackAddress();
