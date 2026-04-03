@@ -75,7 +75,6 @@ import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.util.ArrayList;
-import java.util.Optional;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Predicate;

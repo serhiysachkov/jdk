@@ -47,7 +47,6 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Predicate;
 
 import static jdk.test.lib.net.IPSupport.diagnoseConfigurationIssue;

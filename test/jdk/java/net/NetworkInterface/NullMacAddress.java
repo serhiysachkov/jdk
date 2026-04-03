@@ -45,7 +45,6 @@ import java.net.SocketException;
 import java.util.Locale;
 import java.util.Optional;
 
-import jdk.test.lib.net.IPSupport;
 
 public class NullMacAddress {
 

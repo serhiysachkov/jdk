@@ -39,13 +39,10 @@ import java.nio.channels.DatagramChannel;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import static java.lang.System.out;
-import java.util.stream.Stream;
 
-import static java.lang.System.out;
 import static jdk.test.lib.net.IPSupport.*;
 
 import org.junit.jupiter.api.Assumptions;
